@@ -32,7 +32,7 @@ dictionary = defaultdict(list)
 for file_name in file_name_list:
     # ignore the files CONTENTS and README
     if (file_name != "CONTENTS") and (file_name != "README"):
-        file_path = path + '\\' + file_name
+        file_path = path + '/' + file_name
         with open(file_path, 'r') as file:
             text = file.read().replace('\n', '')
         sent_detector = nltk.data.load('tokenizers/punkt/' + language.lower() + '.pickle')
@@ -49,4 +49,4 @@ query = "insert into " + corpus_table + " (Lang_ID, Doc_ID, Doc_Name, Line_Text,
 if(not logic.isCorpusLoaded(corpus_table)):
     logic.SQLInsertQuery(query)
 document_id += 1
-logic.StoreIndexing(json.dumps(dictionary))
+logic.StoreIndexing(json.dumps(dictionary), 'indexing.txt')

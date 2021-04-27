@@ -38,19 +38,41 @@
 				<option value="{{PartOfSpeech}}">{{PartOfSpeech}}</option>
 			{% endfor %}
 			</select>
-		</form>
+		<label id = "clustermountlable"for="clustermount">Choose amount of clusters: </label>
+		<select name = "clusteramount" id = "clusteramount">
+			<option value = "1">1</option>
+			<option value = "2">2</option>
+			<option value = "3">3</option>
+			<option value = "4">4</option>
+			<option value = "5">5</option>
+		</select>
+		
+		{% if error %}
 		<div id = "results">
-					<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}:</h1>
-					{% if error %}
-      				<p id = "error" class="error"><strong>{{ error }}</strong>
-    				{% endif %}
-				<ol>
-					{% for item in sentence_List %}
-					<li>{{item}}</li>
-					{% endfor %}
-				  </ol>
+			<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}:</h1>
+			<p id = "error" class="error"><strong>{{ error }}</strong>
 		</div>
+		{% endif %}
+
+		{% for cluster in sentence_List_clustered %}
+			<div id = "results">
+				<select name = "dropdown">
+					<option value = "Following Asc">Following Asc</option>
+					<option value = "Following Asc">Following Desc</option>
+					<option value = "Following Asc">Preceding Asc</option>
+					<option value = "Following Asc">Preceding Desc</option>
+				</select>
+				<h1 id = "resultslable"scope="col">Cluster {{loop.index}}:</h1>
+				<ol>	
+					{% for item in cluster %}
+						<li>{{item}}</li>
+					{% endfor %}	
+				</ol>
+			</div>
+		{% endfor %}
+		</form>
 	</body>
+
 	<script>$(function() {$("#language").on("change", function(event){$.ajax({data: {language : $("#language").val()},type:"POST",url : "{{url_for('Query')}}", success: function(response) {$("#partOfSpeech").html(response);;;
 	  }})});});</script>
 		  <script>$(function() {$("#page_language").on("change", function(event){$.ajax({data: {language : $("#page_language").val()},type:"POST",url : "{{url_for('Page')}}", success: function(response) {console.log(response);
@@ -66,5 +88,6 @@
 		document.getElementById("results").style.backgroundColor = "crimson"
 	} 
 	</script>
-	<script></script>
-</html>	
+</html>
+
+

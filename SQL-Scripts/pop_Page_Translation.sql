@@ -99,3 +99,27 @@ values ("Chinese",
 "翻译页面",
 "结果",
 "提交");
+
+/* Populate German data into table */    
+ insert into Page_Translation (Language_Page, Language_Translation, POS_Translation, Error_Translation, PlaceHolder_Translation,Results_Error_Translation,Translate_Page_Translation,Results_Translation,Submit_Translation)
+ values ("German",
+ "Sprache",
+ "Teile der Rede",
+ "Fehler",
+ "Geben Sie das Wort ein",
+ "Wort nicht im Korpus",
+ "Seite übersetzen",
+ "Ergebnisse",
+ "einreichen");
+ 
+ /* Populate German data into table */    
+ insert into Page_Translation (Language_Page, Language_Translation, POS_Translation, Error_Translation, PlaceHolder_Translation,Results_Error_Translation,Translate_Page_Translation,Results_Translation,Submit_Translation)
+ values ("Urdu",
+ "زبان",
+ "تقریر کے کچھ حصے",
+ "غلطی",
+ "لفظ داخل کریں",
+ "لفظ داخل کریں",
+ "زبان کا انتخاب کریں",
+ "نتیجہ",
+ "نتیجہ");

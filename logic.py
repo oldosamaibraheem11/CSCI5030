@@ -22,6 +22,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'CSCI5030SLU2021'
 app.config['MYSQL_DATABASE_DB'] = 'wordsense'
 
+
 mysql = MySQL(app)
 conn = mysql.connect()
 cursor = conn.cursor()
@@ -75,6 +76,24 @@ def tuple2list(ExTuple):
     ExList = list(itertools.chain(*ExTuple))
     return ExList 
 
+
+
+def VectorData(statment):
+    try:
+        cursor.execute(statment)
+        conn.commit()
+        data = cursor.fetchall()
+        status = "OKAY"
+        purpose = "PRODUCTION"
+        SQL_log(statment,status,purpose)
+        return data
+    except:
+        status = "ERROR"
+        purpose = "PRODUCTION"
+        SQL_log(statment,status,purpose)
+
+
+
 def SQLQuery(statment):
     try:
         cursor.execute(statment)
@@ -97,7 +116,6 @@ def SQLInsertQuery(statment):
         status = "OKAY"
         purpose = "PRODUCTION"
         SQL_log(statment,status,purpose)
-        return data
     except:
         status = "ERROR"
         purpose = "PRODUCTION"
@@ -125,26 +143,27 @@ def SQL_log(statment,status,purpose): # this funcation write to a log everytime 
             csvwriter.writerows([row])
 
 def CreateIndexing(sentence, line_id, dictionary):
-    word_list = sentence.split()
-    # number of parts formed for each tagged word in the corpus(word/pos)
-    tagged_word_parts = 2   
-    for word in word_list:
-        # skip untagged words
-        if(len(word.split('/')) != tagged_word_parts):
-            continue
-        subtag = (word.split('/')[1]).upper()
-        # ignore -TL suffix in subtags since they are just to indicate that the word occurs in title
-        subtag = subtag.split('-TL')[0]
-        if(subtag in logic.english_pos_mapping):
-            generalized_pos = logic.english_pos_mapping[subtag]
-        else:
-            generalized_pos = subtag        
-        word = (word.split('/')[0] + "/" + generalized_pos).lower()
-        dictionary[word].append(line_id)        
+    if line_id > 0:
+        word_list = sentence.split()
+        # number of parts formed for each tagged word in the corpus(word/pos)
+        tagged_word_parts = 2   
+        for word in word_list:
+            # skip untagged words
+            if(len(word.split('/')) != tagged_word_parts):
+                continue
+            subtag = (word.split('/')[1]).upper()
+            # ignore -TL suffix in subtags since they are just to indicate that the word occurs in title
+            subtag = subtag.split('-TL')[0]
+            if(subtag in logic.english_pos_mapping):
+                generalized_pos = logic.english_pos_mapping[subtag]
+            else:
+                generalized_pos = subtag        
+            word = (word.split('/')[0] + "/" + generalized_pos).lower()
+            dictionary.setdefault(word, []).append(line_id)        
     return dictionary
 
-def StoreIndexing(dictionary):
-    file = open("indexing.txt", "w")
+def StoreIndexing(dictionary, filename):
+    file = open(filename, "w")
     file.write(dictionary)
     file.close()
 
