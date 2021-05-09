@@ -60,6 +60,11 @@
 			<option value = "3">3</option>
 			<option value = "4">4</option>
 			<option value = "5">5</option>
+			<option value = "6">6</option>
+			<option value = "7">7</option>
+			<option value = "8">8</option>
+			<option value = "9">9</option>
+			<option value = "10">10</option>
 		</select>
 		
 		{% if error %}
@@ -68,19 +73,19 @@
 			<p id = "error" class="error"><strong>{{ error }}</strong>
 		</div>
 		{% endif %}
-
+		<select id = "sorting" name = "dropdown">
+			<option value = "Following,Ascending">Following Word Ascending</option>
+			<option value = "Following,Descending">Following Word Descending</option>
+			<option value = "Preceding,Ascending">Preceding Word Ascending</option>
+			<option value = "Preceding,Descending">Preceding Word Descending</option>
+		</select>
+		<div id = "clusters">
 		{% for cluster in sentence_List_clustered %}
 			<div>
 				<button type="button" class="collapsible">
 					Cluster {{loop.index}}
 				</button>
 				<div class="content">
-					<select name = "dropdown">
-						<option value = "Following Asc">Following Asc</option>
-						<option value = "Following Asc">Following Desc</option>
-						<option value = "Following Asc">Preceding Asc</option>
-						<option value = "Following Asc">Preceding Desc</option>
-					</select>
 					<ol>	
 						{% for item in cluster %}
 							<li>{{item}}</li>
@@ -92,6 +97,7 @@
 				</div>
 			</div>
 		{% endfor %}
+
 		</form>
 
 		<script>
@@ -106,6 +112,19 @@
 						}
 					})
 				});
+			});
+		</script>
+		<script>$(function() 
+			{$("#sorting").on("change", function(event){
+				$.ajax({
+					data: {language : $("#sorting").val()},
+					type:"POST",
+					url : "{{url_for('Sort')}}", 
+					success: function(response) {
+						$("#clusters").html(response);
+					}
+				})
+			});
 			});
 		</script>
 		<script>
@@ -155,6 +174,7 @@
 				});
 			}
 		</script>
+			</div>
 	</body>
 </html>
 

@@ -8,24 +8,25 @@ import json
 import csv
 import os.path
 import json
+import re
 
 
 app = Flask(__name__)
 
-#app.config['MYSQL_HOST'] = 'Osamas-MacBook-Pro.local'
-#app.config['MYSQL_USER'] = 'Osama'
-#app.config['MYSQL_PASSWORD'] = 'CSCI5030SLU2021'
-#app.config['MYSQL_DATABASE_DB'] = 'wordsense'
+app.config['MYSQL_HOST'] = 'Osamas-MacBook-Pro.local'
+app.config['MYSQL_USER'] = 'Osama'
+app.config['MYSQL_PASSWORD'] = 'CSCI5030SLU2021'
+app.config['MYSQL_DATABASE_DB'] = 'wordsense'
 
 # app.config['MYSQL_HOST'] = 'localhost'
 # app.config['MYSQL_DATABASE_USER'] = 'root'
 # app.config['MYSQL_DATABASE_PASSWORD'] = 'CSCI5030@SLU2021'
 # app.config['MYSQL_DATABASE_DB'] = 'wordsense'
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_DATABASE_USER'] = 'pnkls'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
-app.config['MYSQL_DATABASE_DB'] = 'wordsense'
+#app.config['MYSQL_HOST'] = 'localhost'
+#app.config['MYSQL_DATABASE_USER'] = 'pnkls'
+#app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+#app.config['MYSQL_DATABASE_DB'] = 'wordsense'
 
 mysql = MySQL(app)
 conn = mysql.connect()
@@ -179,3 +180,34 @@ def isCorpusLoaded(corpus):
         return False
     else:
         return True
+
+def sortlist(word,biglist,selection):
+    if 'Following' in selection:
+        mover = 1
+    else:
+        mover = -1
+    if "Ascending" in selection:
+        a_z = False
+    else:
+        a_z = True
+    sortdic = {}
+    for string in biglist:
+        formattedstring = string.lower()
+        stringfinder = re.findall(f"[\w']+|[.,!?;]", formattedstring)
+        for words in stringfinder:
+            if word in words:
+                index = stringfinder.index(words)
+        try:
+            sortword = stringfinder[int((index)+mover)]
+        except:
+            sortword = stringfinder[int((index))]
+        sortdic[string] = sortword
+        sortdic = dict(sorted(sortdic.items(), key=lambda item: item[1],reverse=a_z))
+    return list(sortdic.keys())
+
+def sortsents(word,biglist,selection):
+    nestednewlist = []
+    for smalllist in biglist:
+        newlist = sortlist(word,smalllist,selection)
+        nestednewlist.append(newlist)
+    return nestednewlist
