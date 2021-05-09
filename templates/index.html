@@ -66,6 +66,12 @@
 			<option value = "9">9</option>
 			<option value = "10">10</option>
 		</select>
+		<label id = "sentlengthlable"for="sentlengthlable">Choose length of sentence preview: </label>
+        <select name = "sentlength" id = "sentlength">
+            <option value = "5">5 words</option>
+            <option value = "7">7 words</option>
+            <option value = "9">9 words</option>
+        </select>
 		<div id = "clusters">
 		{% if error %}
 		<div id = "results">
@@ -99,14 +105,27 @@
 					Cluster {{loop.index}}
 				</button>
 				<div class="content">
-					<ol>	
-						{% for item in cluster %}
-							<li>{{item}}</li>
-						{% endfor %}	
-					</ol>
+					<ol>    
+                        <div></div>
+                        <table>
+                            <tbody>
+                                {% for item in cluster %}
+                                    {{item|safe}}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </ol>
 				</div>
 				<div class="preview">
-					{{cluster[0]}}
+					
+					<ol>    
+                        <div></div>
+                        <table>
+                            <tbody>
+								{{cluster[0]}}
+                            </tbody>
+                        </table>
+                    </ol>
 				</div>
 			</div>
 		{% endfor %}
@@ -146,6 +165,19 @@
 					data: {language : $("#rerun").val()},
 					type:"POST",
 					url : "{{url_for('Vec')}}", 
+					success: function(response) {
+						$("#clusters").html(response);
+					}
+				})
+			});
+			});
+		</script>
+		<script>$(function() 
+			{$("#sentlength").on("change", function(event){
+				$.ajax({
+					data: {language : $("#sentlength").val()},
+					type:"POST",
+					url : "{{url_for('FullText')}}", 
 					success: function(response) {
 						$("#clusters").html(response);
 					}
