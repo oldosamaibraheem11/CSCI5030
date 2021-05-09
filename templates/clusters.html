@@ -1,0 +1,135 @@
+<div id = "clusters">
+    {% if error %}
+    <div id = "results">
+        <h1 id = "resultslable"scope="col">{{word_translated_list[7]}}</h1>
+        <p id = "error" class="error"><strong>{{ error }}</strong>
+    </div>
+    {% endif %}
+    
+    <select id = "sorting" name = "dropdown">
+        <option value = "Following,Ascending">Following Word Ascending</option>
+        <option value = "Following,Descending">Following Word Descending</option>
+        <option value = "Preceding,Ascending">Preceding Word Ascending</option>
+        <option value = "Preceding,Descending">Preceding Word Descending</option>
+    </select>
+    <label id = "rerunlable"for="rerun">Rerun clusters</label>
+    <select id = "rerun" name = "rerun">
+        <option value = "1">1</option>
+        <option value = "2">2</option>
+        <option value = "3">3</option>
+        <option value = "4">4</option>
+        <option value = "5">5</option>
+        <option value = "6">6</option>
+        <option value = "7">7</option>
+        <option value = "8">8</option>
+        <option value = "9">9</option>
+        <option value = "10">10</option>
+    </select>
+    {% for cluster in sentence_List_clustered %}
+        <div>
+            <button type="button" class="collapsible">
+                Cluster {{loop.index}}
+            </button>
+            <div class="content">
+                <ol>	
+                    {% for item in cluster %}
+                        <li>{{item}}</li>
+                    {% endfor %}	
+                </ol>
+            </div>
+            <div class="preview">
+                {{cluster[0]}}
+            </div>
+        </div>
+    {% endfor %}
+
+    </form>
+
+    <script>
+        $(function() {
+            $("#language").on("change", function(event){
+                $.ajax({
+                    data: {language : $("#language").val()},
+                    type: "POST",
+                    url : "{{url_for('Query')}}", 
+                    success: function(response) {
+                        $("#partOfSpeech").html(response);
+                    }
+                })
+            });
+        });
+    </script>
+    <script>$(function() 
+        {$("#sorting").on("change", function(event){
+            $.ajax({
+                data: {language : $("#sorting").val()},
+                type:"POST",
+                url : "{{url_for('Sort')}}", 
+                success: function(response) {
+                    $("#clusters").html(response);
+                }
+            })
+        });
+        });
+    </script>
+    <script>$(function() 
+        {$("#rerun").on("change", function(event){
+            $.ajax({
+                data: {language : $("#rerun").val()},
+                type:"POST",
+                url : "{{url_for('Vec')}}", 
+                success: function(response) {
+                    $("#clusters").html(response);
+                }
+            })
+        });
+        });
+    </script>
+    <script>
+        $(function() {
+            $("#page_language").on("change", function(event){
+                $.ajax({
+                    data: {language : $("#page_language").val()},
+                    type: "POST",
+                    url : "{{url_for('Page')}}", 
+                    success: function(response) {
+                        console.log(response);
+                        $("#translate_page").html(response[6]);
+                        $("#searchbutton").html(response[8]);
+                        $("#part_of_speech_translate").html(response[2]);
+                        $("#resultslable").html(response[7]);
+                        $("input[type=text]").attr("placeholder", response[4]);
+                        $("#resultslable").html(response[7]);
+                        $("#error").html(response[3]);
+                        $("#clustermountlable").html(response[9]);
+                        $("#language_translate").html(response[1]);
+                    }
+                })
+            });
+        });
+    </script>
+    <script>
+        if (document.getElementById("error").innerHTML.length > 0) {
+            document.getElementById("results").style.backgroundColor = "crimson"
+        } 
+    </script>
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                var preview = content.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                    preview.style.display = "block";
+                } 
+                else {
+                    content.style.display = "block";
+                    preview.style.display = "none";
+                }
+            });
+        }
+    </script>
+        </div>

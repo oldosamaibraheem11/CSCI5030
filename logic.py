@@ -8,6 +8,7 @@ import json
 import csv
 import os.path
 import json
+import re
 
 
 app = Flask(__name__)
@@ -23,60 +24,41 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'CSCI5030SLU2021'
 app.config['MYSQL_DATABASE_DB'] = 'wordsense'
 
 
+# app.config['MYSQL_HOST'] = 'localhost'
+# app.config['MYSQL_DATABASE_USER'] = 'root'
+# app.config['MYSQL_DATABASE_PASSWORD'] = 'CSCI5030@SLU2021'
+# app.config['MYSQL_DATABASE_DB'] = 'wordsense'
+
+#app.config['MYSQL_HOST'] = 'localhost'
+#app.config['MYSQL_DATABASE_USER'] = 'pnkls'
+#app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+#app.config['MYSQL_DATABASE_DB'] = 'wordsense'
+
 mysql = MySQL(app)
 conn = mysql.connect()
 cursor = conn.cursor()
 
 english_pos_mapping = {
-    "NN":"Noun", 
-    "NN$":"Noun",
-    "NNS":"Noun",
-    "NNS$":"Noun",
-    "NP":"Noun",
-    "NP$":"Noun",
-    "NPS":"Noun",
-    "NPS$":"Noun",
-    "NR":"Noun",
-    "NRS":"Noun",
-    "VB":"Verb",
-    "VBD":"Verb",
-    "VBG":"Verb",
-    "VBN":"Verb",
-    "VBP":"Verb",
-    "VBZ":"Verb",
-    "PN":"Pronoun",
-    "PN$":"Pronoun",
-    "PP$":"Pronoun",
-    "PP$$":"Pronoun",
-    "PPL":"Pronoun",
-    "PPLS":"Pronoun",
-    "PPO":"Pronoun",
-    "PPS":"Pronoun",
-    "PPSS":"Pronoun",
-    "WP$":"Pronoun",
-    "WPO":"Pronoun",
-    "WPS":"Pronoun",
-    "JJ":"Adjective",
-    "JJR":"Adjective",
-    "JJS":"Adjective",
-    "JJT":"Adjective",
-    "RB":"Adverb",
-    "RBR":"Adverb",
-    "RBT":"Adverb",
-    "RN":"Adverb",
-    "RP":"Adverb",
-    "WRB":"Adverb",
-    "CC":"Conjunction",
-    "CS":"Conjunction",
-    "AT":"Article",
-    "UH":"Interjection"
+    "NOUN":"Noun","PROPN":"Noun","VERB":"Verb","AUX":"Verb",
+    "PRON":"Pronoun","ADJ":"Adjective","ADP":"Adposition","ADV":"Adverb","CONJ":"Conjunction","SCONJ":"Conjunction",
+    "INTJ":"Interjection","PART":"Particle","PUNCT":"Punctuation","NUM":"Numeral","DET":"Determiner","SYM":"Symbol","X":"other"
 }
+german_pos_mapping = {
+    "NOUN":"Substantiv","PROPN":"Substantiv","VERB":"Verb","AUX":"Verb",
+    "PRON":"Pronomen","ADJ":"Adjektiv","ADP":"Adposition","ADV":"Adverb","CONJ":"Konjunktion","SCONJ":"Konjunktion",
+    "INTJ":"Interjektion","TEIL":"Partikel","PUNCT":"Interpunktion","NUM":"Ziffer","DET":"Bestimmer","SYM":"Symbol","X":"andere"
+}
+italian_pos_mapping = {
+    "NOUN":"sostantivo","PROPN":"sostantivo","VERBO":"verbo","AUX":"verbo",
+    "PRON":"pronome","ADJ":"aggettivo","ADP":"adposition","ADV":"avverbio","CONJ":"congiunzione","SCONJ":"congiunzione",
+    "INTJ":"interiezione","PARTE":"particella","PUNCT":"punteggiatura","NUM":"numerale","DET":"determinante","SYM":"simbolo","X":"altro"
+}
+
+pos_ignore = ["NUM","SYM","PUNCT","X"]
 
 def tuple2list(ExTuple):
     ExList = list(itertools.chain(*ExTuple))
     return ExList 
-
-
 
 def VectorData(statment):
     try:
@@ -142,36 +124,59 @@ def SQL_log(statment,status,purpose): # this funcation write to a log everytime 
             csvwriter.writerows([headers])
             csvwriter.writerows([row])
 
-def CreateIndexing(sentence, line_id, dictionary):
+def CreateIndexing(language, sentence, line_id, dictionary):
     if line_id > 0:
         word_list = sentence.split()
         # number of parts formed for each tagged word in the corpus(word/pos)
-        tagged_word_parts = 2   
+        tagged_word_parts = 2
+        if(language.lower() == "english"):
+            mapping = logic.english_pos_mapping
+        elif(language.lower() == "german"):
+            mapping = logic.german_pos_mapping
+        elif(language.lower() == "italian"):
+            mapping = logic.italian_pos_mapping
         for word in word_list:
             # skip untagged words
             if(len(word.split('/')) != tagged_word_parts):
                 continue
             subtag = (word.split('/')[1]).upper()
-            # ignore -TL suffix in subtags since they are just to indicate that the word occurs in title
-            subtag = subtag.split('-TL')[0]
-            if(subtag in logic.english_pos_mapping):
-                generalized_pos = logic.english_pos_mapping[subtag]
+            if(subtag in pos_ignore):
+                continue
+            if(subtag in mapping):
+                generalized_pos = mapping[subtag]
             else:
                 generalized_pos = subtag        
             word = (word.split('/')[0] + "/" + generalized_pos).lower()
-            dictionary.setdefault(word, []).append(line_id)        
+            dictionary.setdefault(word, []).append(line_id)
+        
     return dictionary
 
-def StoreIndexing(dictionary, filename):
+def StoreIndexing(language, dictionary):
+    filename = 'indexing.txt'
+    if language.lower() == "english":
+        filename = 'englishindexing.txt'
+    elif language.lower() == "german":
+        filename = 'germanindexing.txt'
+    elif language.lower() == "italian":
+        filename = 'italianindexing.txt'
     file = open(filename, "w")
     file.write(dictionary)
     file.close()
 
-def GetIndexing():
+def GetIndexing(language):
     dictionary = {}
-    if(os.path.exists("indexing.txt")):
-        file = open("indexing.txt", "r")
-        dictionary = json.loads(file.read())
+    if language.lower() == "english":
+        if(os.path.exists("englishindexing.txt")):
+            file = open("englishindexing.txt", "r")
+            dictionary = json.loads(file.read())
+    elif language.lower() == "german":
+        if(os.path.exists("germanindexing.txt")):
+            file = open("germanindexing.txt", "r")
+            dictionary = json.loads(file.read())
+    elif language.lower() == "italian":
+        if(os.path.exists("italianindexing.txt")):
+            file = open("italianindexing.txt", "r")
+            dictionary = json.loads(file.read())
     return dictionary
     
 def isCorpusLoaded(corpus):
@@ -181,3 +186,34 @@ def isCorpusLoaded(corpus):
         return False
     else:
         return True
+
+def sortlist(word,biglist,selection):
+    if 'Following' in selection:
+        mover = 1
+    else:
+        mover = -1
+    if "Ascending" in selection:
+        a_z = False
+    else:
+        a_z = True
+    sortdic = {}
+    for string in biglist:
+        formattedstring = string.lower()
+        stringfinder = re.findall(f"[\w']+|[.,!?;]", formattedstring)
+        for words in stringfinder:
+            if word in words:
+                index = stringfinder.index(words)
+        try:
+            sortword = stringfinder[int((index)+mover)]
+        except:
+            sortword = stringfinder[int((index))]
+        sortdic[string] = sortword
+        sortdic = dict(sorted(sortdic.items(), key=lambda item: item[1],reverse=a_z))
+    return list(sortdic.keys())
+
+def sortsents(word,biglist,selection):
+    nestednewlist = []
+    for smalllist in biglist:
+        newlist = sortlist(word,smalllist,selection)
+        nestednewlist.append(newlist)
+    return nestednewlist
