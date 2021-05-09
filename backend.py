@@ -43,7 +43,6 @@ def homepage():
         if word_selected in dictionary:
             line_ids= str(dictionary[word_selected])[1:][:-1]
             activesession["line_ids"] = line_ids
-            print(len(sentence_List))
             clusteramount = request.form["clusteramount"]
             clusterlist = list(range(1,int(clusteramount)+1))
             sentence_List_clustered = kmeans.KMeansClustering(int(clusteramount),line_ids,language_selected)
