@@ -5,6 +5,7 @@ import logic
 import json
 from collections import defaultdict
 import kmeans
+import Kwic
 app = Flask(__name__)
 
 activesession = {}
@@ -18,7 +19,6 @@ def homepage():
     part_of_speech_list = []
     page_language_list = []
     error = ""
-    # Get the indexing in memory so that we have it until the application is closed
     english_dictionary = logic.GetIndexing("english")
     german_dictionary = logic.GetIndexing("german")
     italian_dictionary = logic.GetIndexing("italian")
@@ -55,6 +55,8 @@ def homepage():
             else:
                 error = sentence_List_clustered
                 sentence_List_clustered = []
+            sentencelength = request.form["sentlength"]
+            sentence_List_clustered = Kwic.KWlist((request.form.get('word')),sentence_List_clustered,int(sentencelength),0)
         if len(sentence_List) == 0:
             error = "Error: Word not in corpus"
     language_list = logic.SQLQuery("SELECT Lang_Desc FROM Lang_Ref;")
@@ -101,6 +103,12 @@ def Vec():
         error = sentence_List_clustered
         sentence_List_clustered = []
     return render_template('clusters.html', sentence_List_clustered=sentence_List_clustered, error=error)
+@app.route('/FullText', methods =["GET", "POST"])
+def FullText():
+    lastwordsearch = activesession['Word_Selected']
+    nestedlist = activesession["sentence_list"]
+    sentence_List_clustered = Kwic.KWlist((lastwordsearch),nestedlist,0,-1)
+    return render_template('clusters.html', sentence_List_clustered = sentence_List_clustered)
 
 if __name__ == '__main__':
     app.run(debug = True)

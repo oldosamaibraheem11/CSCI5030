@@ -5,7 +5,7 @@
         <p id = "error" class="error"><strong>{{ error }}</strong>
     </div>
     {% endif %}
-    
+    <label id = "sortinglable"for="sorting">Choose sorting</label>
     <select id = "sorting" name = "dropdown">
         <option value = "Following,Ascending">Following Word Ascending</option>
         <option value = "Following,Descending">Following Word Descending</option>
@@ -31,10 +31,14 @@
                 Cluster {{loop.index}}
             </button>
             <div class="content">
-                <ol>	
-                    {% for item in cluster %}
-                        <li>{{item}}</li>
-                    {% endfor %}	
+                <ol>
+                    <table>
+                        <tbody>
+                            {% for item in cluster %}
+                                {{item|safe}}
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </ol>
             </div>
             <div class="preview">
@@ -78,6 +82,19 @@
                 data: {language : $("#rerun").val()},
                 type:"POST",
                 url : "{{url_for('Vec')}}", 
+                success: function(response) {
+                    $("#clusters").html(response);
+                }
+            })
+        });
+        });
+    </script>
+    <script>$(function() 
+        {$("#sentlength").on("change", function(event){
+            $.ajax({
+                data: {language : $("#sentlength").val()},
+                type:"POST",
+                url : "{{url_for('FullText')}}", 
                 success: function(response) {
                     $("#clusters").html(response);
                 }
