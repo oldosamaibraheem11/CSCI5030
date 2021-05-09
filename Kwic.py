@@ -45,7 +45,7 @@ def KW(word_selected, line_text , surrounding_word, wordamount):
                     for n in kwicdict[word_selected]:
 
                         outstring1 = ' '.join(n[:keynumber])
-                        outstring2 = "<b><span style='color:red;'>"+word_selected+"</b></span>"
+                        outstring2 = "<b><span style='color:red;'>"+word_selected+"</span></b>"
                         outstring3 = ' '.join(n[keynumber+1:])
                         idx = idx+1
                         table_row_num = str(idx)
