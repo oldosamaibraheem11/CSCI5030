@@ -107,7 +107,7 @@ def Vec():
 def FullText():
     lastwordsearch = activesession['Word_Selected']
     nestedlist = activesession["sentence_list"]
-    sentence_List_clustered = colorcheck.KWlist((lastwordsearch),nestedlist,0,-1)
+    sentence_List_clustered = kwic.KWlist((lastwordsearch),nestedlist,0,-1)
     return render_template('clusters.html', sentence_List_clustered = sentence_List_clustered)
 
 if __name__ == '__main__':
