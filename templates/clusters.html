@@ -31,7 +31,7 @@
                 Cluster {{loop.index}}
             </button>
             <div class="content">
-                <ol>
+                <ol>    
                     <table>
                         <tbody>
                             {% for item in cluster %}
@@ -42,7 +42,13 @@
                 </ol>
             </div>
             <div class="preview">
-                {{cluster[0]}}
+                <ol>    
+                    <table>
+                        <tbody>
+                            {{cluster[0]|safe}}
+                        </tbody>
+                    </table>
+                </ol>
             </div>
         </div>
     {% endfor %}
@@ -149,4 +155,6 @@
             });
         }
     </script>
+    <script> function fulltext(){$.ajax({url: "{{url_for('FullText')}}", success: function(result){$("#clusters").html(result);
+            }})};</script>
         </div>

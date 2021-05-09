@@ -72,6 +72,7 @@
             <option value = "7">7 words</option>
             <option value = "9">9 words</option>
         </select>
+		<button type = 'button' onclick="fulltext()">Full Text</button></div>
 		<div id = "clusters">
 		{% if error %}
 		<div id = "results">
@@ -106,7 +107,6 @@
 				</button>
 				<div class="content">
 					<ol>    
-                        <div></div>
                         <table>
                             <tbody>
                                 {% for item in cluster %}
@@ -117,15 +117,13 @@
                     </ol>
 				</div>
 				<div class="preview">
-					
 					<ol>    
-                        <div></div>
-                        <table>
-                            <tbody>
-								{{cluster[0]}}
-                            </tbody>
-                        </table>
-                    </ol>
+						<table>
+							<tbody>
+								{{cluster[0]|safe}}
+							</tbody>
+						</table>
+					</ol>
 				</div>
 			</div>
 		{% endfor %}
@@ -232,6 +230,8 @@
 				});
 			}
 		</script>
+		<script> function fulltext(){$.ajax({url: "{{url_for('FullText')}}", success: function(result){$("#clusters").html(result);
+				}})};</script>
 			</div>
 	</body>
 </html>
