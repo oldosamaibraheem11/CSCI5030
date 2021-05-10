@@ -10,14 +10,15 @@
 		crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="static/main.css">
     </head>
-	<p id = "historyfontsize" hidden >{{fontsize}}</p>
-		<p id = "historycolors" hidden>{{colors}}</p>
     <body id = "wholepage">
+		<p id = "historyfontsize" hidden >{{fontsize}}</p>
+		<p id = "historycolors" hidden>{{colors}}</p>
+		<p id = "pagelangaugeselected" hidden>{{word_translated_list[1]}}</p>
 		<form method="GET" action="/search" >
 		<div id = "header">
 			<h1 id = "appname">Deelingual</h1>
 			<div id = "translate_page_div" >
-				<label id = "translate_page"for="page_language">{{word_translated_list[6]}}</label>
+				<label id = "translate_page"for="page_language">{{word_translated_list[7]}}</label>
 				<select id="page_language" name ="page_language">
 					{% for page_language in page_language_list %}
 					<option value="{{page_language}}">{{page_language}}</option>
@@ -25,31 +26,28 @@
 				</select>
 			</div>
 			<div id = "accessibility">
-				Accessibility List:
-				<label class="switch">
-					Invert Colors
+			<label id = "accessibilitylable"for="page_language">{{word_translated_list[24]}}</label>
+			<label id = "colorchange"class="switch">{{word_translated_list[16]}}</label>
 					<input id = "Invert_colors"type="checkbox">
 					<span class="slider"></span>
-				  </label>
-				  <label class="switch">
-					Larger Font Size
+				<label id = "fontchange"class="switch">{{word_translated_list[17]}}</label>
 					<input id = "Font_size"type="checkbox">
 					<span class="slider"></span>
-				  </label>
+				 
 			</div>
 		</div>
 		<div id = "SearchForm">
-		<input type=button onClick="location.href='homepage'"value='Return search page'>
-		<button type = 'button' onclick="fulltext()">Show full sentences view</button>
-		<button type = 'button' onclick="KWIC()">Show KWIC sentences view</button>
-		<label id = "sortinglable"for="sorting">Choose sorting</label>
+		<input id = "homebutton"type=button onClick="location.href='homepage'"value='{{word_translated_list[18]}}'>
+		<button id = "fullview"type = 'button' onclick="fulltext()">{{word_translated_list[19]}}</button>
+		<button id = "kwicview"type = 'button' onclick="KWIC()">{{word_translated_list[20]}}</button>
+		<label id = "sortinglable"for="sorting">{{word_translated_list[21]}}</label>
 		<select id = "sorting" name = "dropdown">
-			<option value = "Following,Ascending">Following Word Ascending</option>
-			<option value = "Following,Descending">Following Word Descending</option>
-			<option value = "Preceding,Ascending">Preceding Word Ascending</option>
-			<option value = "Preceding,Descending">Preceding Word Descending</option>
+			<option id = "Following,Ascending"value = "Following,Ascending">{{word_translated_list[12]}}</option>
+			<option id = "Following,Descending"value = "Following,Descending">{{word_translated_list[13]}}</option>
+			<option id = "Preceding,Ascending"value = "Preceding,Ascending">{{word_translated_list[14]}}</option>
+			<option id = "Preceding,Descending"value = "Preceding,Descending">{{word_translated_list[15]}}</option>
 		</select>
-		<label id = "rerunlable"for="rerun">Rerun clusters</label>
+		<label id = "rerunlable"for="rerun">{{word_translated_list[22]}}</label>
 		<select id = "rerun" name = "rerun">
 			<option value = "1">1</option>
 			<option value = "2">2</option>
@@ -62,25 +60,31 @@
 			<option value = "9">9</option>
 			<option value = "10">10</option>
 		</select>
-		<label id = "sentlengthlable"for="sentlengthlable">Choose length of sentence preview: </label>
-        <select name = "sentlength" id = "sentlength">
-            <option value = "5">5 words</option>
-            <option value = "7">7 words</option>
-            <option value = "9">9 words</option>
+		<label id = "sentlengthlable"for="sentlengthlable">{{word_translated_list[23]}} </label>
+        <select id = "sentlength"name = "sentlength" id = "sentlength">
+            <option value = "5">5 {{word_translated_list[26]}}</option>
+            <option value = "7">7 {{word_translated_list[26]}}</option>
+            <option value = "9">9 {{word_translated_list[26]}}</option>
         </select>
 	</div>
 		<div id = "clusters">
+		
 		{% if error %}
 		<div id = "results">
-			<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}</h1>
-			<p id = "error" class="error"><strong>{{ error }}</strong>
-		</div>
+    {% if "enough" in error %}
+	<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}</h1>
+	<p id = "error" class="error"><strong>{{word_translated_list[25]}}</strong>
+</div>
+    {% else %}
+	<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}</h1>
+	<p id = "error" class="error"><strong>{{word_translated_list[6]}}</strong>
+    {% endif %}
 		{% endif %}
 		{% for cluster in sentence_List_clustered %}
 			<div>
-				<button type="button" class="collapsible">
-					Cluster {{loop.index}}
-				</button>
+				<button id= "clusterlable"type="button" class="collapsible">
+					{{word_translated_list[11]}}
+				</button>{{loop.index}}
 				<div class="content">
 					<ol>    
                         <table>
@@ -167,16 +171,25 @@
 						type: "GET",
 						url : "{{url_for('Page')}}", 
 						success: function(response) {
-							console.log(response);
-							$("#translate_page").html(response[6]);
-							$("#searchbutton").html(response[8]);
-							$("#part_of_speech_translate").html(response[2]);
-							$("#resultslable").html(response[7]);
-							$("input[type=text]").attr("placeholder", response[4]);
-							$("#resultslable").html(response[7]);
-							$("#error").html(response[3]);
-							$("#clustermountlable").html(response[9]);
-							$("#language_translate").html(response[1]);
+							$("#part_of_speech_translate").html(response[3]);
+							$("#accessibilitylable").html(response[24]);
+							$("#homebutton").attr("value",response[18]);
+							$("#clusterlable").html(response[11]);
+							$("#fullview").html(response[19]);
+							$("#kwicview").html(response[20]);
+							$("#sortinglable").html(response[21]);
+							$("#translate_page").html(response[7]);
+							$("#colorchange").html(response[16]);
+							$("#fontchange").html(response[17]);
+							$("#rerunlable").html(response[22]);
+							$("#sentlengthlable").html(response[23]);
+							document.getElementsByName('dropdown')[0].options[0].innerHTML = response[12];
+							document.getElementsByName('dropdown')[0].options[1].innerHTML = response[13];
+							document.getElementsByName('dropdown')[0].options[2].innerHTML = response[14];
+							document.getElementsByName('dropdown')[0].options[3].innerHTML = response[15];
+							document.getElementsByName('sentlength')[0].options[0].innerHTML = "5 "+response[26];
+							document.getElementsByName('sentlength')[0].options[1].innerHTML = "7 "+response[26];
+							document.getElementsByName('sentlength')[0].options[2].innerHTML = "9 "+response[26];
 						}
 					})
 				});
@@ -297,6 +310,10 @@
 					document.body.style.fontSize = "medium"
 				}
 						
+					</script>
+					<script>
+						var pagelan = document.getElementById("pagelangaugeselected").innerHTML
+						document.getElementById('page_language').value=pagelan;
 					</script>
 			</div>
 	</body>
