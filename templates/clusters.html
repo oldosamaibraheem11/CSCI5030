@@ -81,7 +81,7 @@
 				$.ajax({
 					data: {language : $("#sentlength").val()},
 					type:"GET",
-					url : "{{url_for('FullText')}}", 
+					url : "{{url_for('kwic')}}", 
 					success: function(response) {
 						$("#clusters").html(response);
 					}
@@ -138,7 +138,7 @@
 		</script>
 		<script> function fulltext(){$.ajax({url: "{{url_for('FullText')}}", success: function(result){$("#clusters").html(result);
 				}})};</script>
-		<script> function KWIC(){$.ajax({url: "{{url_for('kwic')}}", success: function(result){$("#clusters").html(result);
+		<script> function KWIC(){$.ajax({url: "{{url_for('kwic')}}",  type: "POST",success: function(result){$("#clusters").html(result);
 		}})};</script>
 			</div>
 	</body>
