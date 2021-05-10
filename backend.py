@@ -18,10 +18,10 @@ def pagehome():
 
 @app.route('/homepage', methods =["GET", "POST"])
 def homepage():
-
-    language_list = logic.SQLQuery("SELECT Lang_Desc FROM Lang_Ref;")
+    language_list = ['English','Italian','German']
     part_of_speech_list = logic.SQLQuery("SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
-    page_language_list = logic.SQLQuery("select Language_Page from Page_Translation;")
+    print(part_of_speech_list)
+    page_language_list = ['English','Italian','German']
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
     return render_template('index.html', language_list = language_list, part_of_speech_list=part_of_speech_list,page_language_list=page_language_list,word_translated_list=word_translated_list)
 
@@ -99,7 +99,6 @@ def Sort():
     if activesession['FullText'] == True:
         nested_list = Kwic.KWlist(word,nested_list,0,-1)
     else:
-        
         nested_list = Kwic.KWlist((word),nested_list,int(sentencelength),0)
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
     return render_template('clusters.html', sentence_List_clustered=nested_list,word_translated_list=word_translated_list)
@@ -139,7 +138,12 @@ def FullText():
 def kwic():
     lastwordsearch = activesession['Word_Selected']
     nestedlist = activesession["sentence_list"]
-    sentencelength = activesession['sentlength']
+    if request.method == "POST":
+        sentencelength = activesession['sentlength']
+    else:
+        sentencelength = request.args.get('language')
+        print(sentencelength)
+        activesession['sentlength'] = sentencelength
     sentence_List_clustered = Kwic.KWlist((lastwordsearch),nestedlist,int(sentencelength),0)
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
     return render_template('clusters.html', sentence_List_clustered = sentence_List_clustered,word_translated_list=word_translated_list )
