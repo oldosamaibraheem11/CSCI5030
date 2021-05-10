@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
 		<meta charset="utf-8">
@@ -206,7 +206,7 @@
 		</script>
 		<script> function fulltext(){$.ajax({url: "{{url_for('FullText')}}", success: function(result){$("#clusters").html(result);
 				}})};</script>
-		<script> function KWIC(){$.ajax({url: "{{url_for('kwic')}}", success: function(result){$("#clusters").html(result);
+		<script> function KWIC(){$.ajax({url: "{{url_for('kwic')}}", type: "POST", success: function(result){$("#clusters").html(result);
 		}})};</script>
 			</div>
 	</body>
