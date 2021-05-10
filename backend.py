@@ -12,6 +12,8 @@ activesession = {}
 english_dictionary = logic.GetIndexing("english")
 german_dictionary = logic.GetIndexing("german")
 italian_dictionary = logic.GetIndexing("italian")
+activesession['colors'] = 'unclicked'
+activesession['fontsize'] = 'unclicked'
 @app.route('/', methods =["GET", "POST"])
 def pagehome():
     return redirect(url_for('homepage'))
@@ -20,9 +22,10 @@ def pagehome():
 def homepage():
     language_list = ['English','Italian','German']
     part_of_speech_list = logic.SQLQuery("SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
-    print(part_of_speech_list)
     page_language_list = ['English','Italian','German']
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
+    fontsize = activesession['fontsize'] 
+    colors = activesession['colors']
     return render_template('index.html', language_list = language_list, part_of_speech_list=part_of_speech_list,page_language_list=page_language_list,word_translated_list=word_translated_list)
 
 @app.route('/search', methods =["GET", "POST"])
@@ -70,7 +73,9 @@ def search():
     part_of_speech_list = logic.SQLQuery("SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
     page_language_list = logic.SQLQuery("select Language_Page from Page_Translation;")
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
-    return render_template('search.html', sentence_List_clustered=sentence_List_clustered, error=error, page_language_list=page_language_list,word_translated_list=word_translated_list)
+    fontsize = activesession['fontsize'] 
+    colors = activesession['colors']
+    return render_template('search.html', fontsize=fontsize,colors=colors,sentence_List_clustered=sentence_List_clustered, error=error, page_language_list=page_language_list,word_translated_list=word_translated_list)
 
 
 
@@ -142,11 +147,25 @@ def kwic():
         sentencelength = activesession['sentlength']
     else:
         sentencelength = request.args.get('language')
-        print(sentencelength)
         activesession['sentlength'] = sentencelength
     sentence_List_clustered = Kwic.KWlist((lastwordsearch),nestedlist,int(sentencelength),0)
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
-    return render_template('clusters.html', sentence_List_clustered = sentence_List_clustered,word_translated_list=word_translated_list )
-
+    return render_template('clusters.html', sentence_List_clustered = sentence_List_clustered,word_translated_list=word_translated_list)
+@app.route('/colors', methods =["GET", "POST"])
+def colors():
+    bol = request.args.get('language')
+    if bol == 'clicked':
+        activesession['colors'] = 'clicked'
+    else:
+        activesession['colors'] = 'unclicked'
+    return jsonify(bol)
+@app.route('/fontsize', methods =["GET", "POST"])
+def fontsize():
+    bol = request.args.get('language')
+    if bol == 'clicked':
+        activesession['fontsize'] = 'clicked'
+    else:
+        activesession['fontsize'] = 'unclicked'
+    return jsonify(bol)
 if __name__ == '__main__':
     app.run(debug = True)

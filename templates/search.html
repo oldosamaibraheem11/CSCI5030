@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
     <head>
 		<meta charset="utf-8">
@@ -10,8 +10,10 @@
 		crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="static/main.css">
     </head>
+	<p id = "historyfontsize" hidden >{{fontsize}}</p>
+		<p id = "historycolors" hidden>{{colors}}</p>
     <body id = "wholepage">
-		<form method="GET" action="" >
+		<form method="GET" action="/search" >
 		<div id = "header">
 			<h1 id = "appname">Deelingual</h1>
 			<div id = "translate_page_div" >
@@ -208,6 +210,94 @@
 				}})};</script>
 		<script> function KWIC(){$.ajax({url: "{{url_for('kwic')}}", type: "POST", success: function(result){$("#clusters").html(result);
 		}})};</script>
+			<script>var invertcolors = false;
+				var fontsize = false;
+			$("#Invert_colors").on('change', function() {
+				if ($(this).is(':checked')) {
+					invertcolors = $(this).is(':checked');
+					document.getElementById("sentlengthlable").style.color = "white";
+					document.getElementById("rerunlable").style.color = "white";
+					document.getElementById("sortinglable").style.color = "white";
+					document.body.id = "body-invert"
+					$.ajax({
+					data: {language : "clicked"},
+					type:"GET",
+					url : "{{url_for('colors')}}", 
+					success: function(response) {
+						;
+					}
+				})
+				}
+				else {
+					invertcolors = $(this).is(':checked');
+					document.getElementById("sentlengthlable").style.color = "black";
+					document.getElementById("rerunlable").style.color = "black";
+					document.getElementById("sortinglable").style.color = "black";
+					document.body.id = ""
+					$.ajax({
+					data: {language : "unclicked"},
+					type:"GET",
+					url : "{{url_for('colors')}}", 
+					success: function(response) {
+						;
+					}
+				})
+				}
+			});
+			$("#Font_size").on('change', function() {
+				if ($(this).is(':checked')) {
+					fontsize = $(this).is(':checked');
+					document.body.style.fontSize = "xx-large"
+					$.ajax({
+					data: {language : "clicked"},
+					type:"GET",
+					url : "{{url_for('fontsize')}}", 
+					success: function(response) {
+						;
+					}
+				})
+				}
+				else {
+					fontsize = $(this).is(':checked');
+				   document.body.style.fontSize = "medium"
+				   $.ajax({
+					data: {language : "unclicked"},
+					type:"GET",
+					url : "{{url_for('fontsize')}}", 
+					success: function(response) {
+						;
+					}
+				})
+				}
+			});
+			</script>
+			<script>
+				var colors = document.getElementById("historycolors").innerHTML
+				var fontsize = document.getElementById("historyfontsize").innerHTML
+				if (colors = "clicked"){
+					invertcolors = $(this).is(':checked');
+					document.getElementById("sentlengthlable").style.color = "white";
+					document.getElementById("rerunlable").style.color = "white";
+					document.getElementById("sortinglable").style.color = "white";
+					document.body.id = "body-invert"
+					document.getElementById("Invert_colors").checked = true;
+				}else{
+					document.getElementById("sentlengthlable").style.color = "black";
+					document.getElementById("rerunlable").style.color = "black";
+					document.getElementById("sortinglable").style.color = "black";
+					document.body.id = ""
+					document.getElementById("Invert_colors").checked = false;
+				}
+				if (fontsize = "clicked"){
+					fontsize = $(this).is(':checked');
+					document.body.style.fontSize = "xx-large"
+					document.getElementById("Font_size").checked = true;
+				}else{
+					document.getElementById("Font_size").checked = false;
+					document.body.style.fontSize = "medium"
+				}
+						
+					</script>
 			</div>
 	</body>
 </html>
