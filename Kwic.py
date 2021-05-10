@@ -50,7 +50,7 @@ def KW(word_selected, line_text , surrounding_word, wordamount):
                         idx = idx+1
                         table_row_num = str(idx)
 
-                        sentlist.append('<tr ><td style = padding-top:30px;>'+table_row_num + "."+ " &nbsp; " +outstring1+ " &nbsp; " + outstring2 + " &nbsp;"+outstring3+'</td></tr>  ')
+                        sentlist.append('<tr ><td style = padding-top:30px;>'+table_row_num+"."+ " &nbsp; " +outstring1+ " &nbsp; " + outstring2 + " &nbsp;"+outstring3+'</td></tr>  ')
                         
                 except:
                     pass
@@ -75,7 +75,7 @@ def KW(word_selected, line_text , surrounding_word, wordamount):
                         outstring3 = ' '.join(n[(keynumber+1):])
                         idx = idx+1
                         table_row_num = str(idx)
-                        sentlist.append('<tr><td>'+table_row_num+'</td>'+'<td style="text-align:right;">'+outstring1+'</td><td style="text-align:left; font-weight: bold;color: rgb(255,20,20);">'+ " &nbsp; " + outstring2 + " &nbsp;"+'</td><td style="text-align:left;">'+outstring3+'</td></tr>')
+                        sentlist.append('<tr><td>'+table_row_num+"."+'</td>'+'<td style="text-align:right;">'+outstring1+'</td><td style="text-align:left; font-weight: bold;color: rgb(255,20,20);">'+ " &nbsp; " + outstring2 + " &nbsp;"+'</td><td style="text-align:left;">'+outstring3+'</td></tr>')
                 except:
                     pass
         
