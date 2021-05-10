@@ -1,235 +1,253 @@
-
-		<div id = "clusters">
-		{% if error %}
-		<div id = "results">
-			<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}</h1>
-			<p id = "error" class="error"><strong>{{ error }}</strong>
+<div id = "clusters">
+		
+	{% if error %}
+	<div id = "results">
+{% if "enough" in error %}
+<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}</h1>
+<p id = "error" class="error"><strong>{{word_translated_list[25]}}</strong>
+</div>
+{% else %}
+<h1 id = "resultslable"scope="col">{{word_translated_list[7]}}</h1>
+<p id = "error" class="error"><strong>{{word_translated_list[6]}}</strong>
+{% endif %}
+	{% endif %}
+	{% for cluster in sentence_List_clustered %}
+		<div>
+			<button id= "clusterlable"type="button" class="collapsible">
+				{{word_translated_list[11]}}
+			</button>{{loop.index}}
+			<div class="content">
+				<ol>    
+					<table>
+						<tbody>
+							{% for item in cluster %}
+								{{item|safe}}
+							{% endfor %}
+						</tbody>
+					</table>
+				</ol>
+			</div>
+			<div class="preview">
+				<ol>    
+					<table>
+						<tbody>
+							{{cluster[0]|safe}}
+						</tbody>
+					</table>
+				</ol>
+			</div>
 		</div>
-		{% endif %}
-		{% for cluster in sentence_List_clustered %}
-			<div>
-				<button type="button" class="collapsible">
-					Cluster {{loop.index}}
-				</button>
-				<div class="content">
-					<ol>    
-                        <table>
-                            <tbody>
-                                {% for item in cluster %}
-                                    {{item|safe}}
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </ol>
-				</div>
-				<div class="preview">
-					<ol>    
-						<table>
-							<tbody>
-								{{cluster[0]|safe}}
-							</tbody>
-						</table>
-					</ol>
-				</div>
-			</div>
-		{% endfor %}
+	{% endfor %}
 
-		</form>
+	</form>
 
-		<script>
-			$(function() {
-				$("#language").on("change", function(event){
-					$.ajax({
-						data: {language : $("#language").val()},
-						type: "GET",
-						url : "{{url_for('Query')}}", 
-						success: function(response) {
-							$("#partOfSpeech").html(response);
-						}
-					})
-				});
-			});
-		</script>
-		<script>$(function() 
-			{$("#sorting").on("change", function(event){
+	<script>
+		$(function() {
+			$("#language").on("change", function(event){
 				$.ajax({
-					data: {language : $("#sorting").val()},
-					type:"GET",
-					url : "{{url_for('Sort')}}", 
+					data: {language : $("#language").val()},
+					type: "GET",
+					url : "{{url_for('Query')}}", 
 					success: function(response) {
-						$("#clusters").html(response);
+						$("#partOfSpeech").html(response);
 					}
 				})
 			});
-			});
-		</script>
-		<script>$(function() 
-			{$("#rerun").on("change", function(event){
+		});
+	</script>
+	<script>$(function() 
+		{$("#sorting").on("change", function(event){
+			$.ajax({
+				data: {language : $("#sorting").val()},
+				type:"GET",
+				url : "{{url_for('Sort')}}", 
+				success: function(response) {
+					$("#clusters").html(response);
+				}
+			})
+		});
+		});
+	</script>
+	<script>$(function() 
+		{$("#rerun").on("change", function(event){
+			$.ajax({
+				data: {language : $("#rerun").val()},
+				type:"GET",
+				url : "{{url_for('Vec')}}", 
+				success: function(response) {
+					$("#clusters").html(response);
+				}
+			})
+		});
+		});
+	</script>
+	<script>$(function() 
+		{$("#sentlength").on("change", function(event){
+			$.ajax({
+				data: {language : $("#sentlength").val()},
+				type:"GET",
+				url : "{{url_for('kwic')}}", 
+				success: function(response) {
+					$("#clusters").html(response);
+				}
+			})
+		});
+		});
+	</script>
+	<script>
+		$(function() {
+			$("#page_language").on("change", function(event){
 				$.ajax({
-					data: {language : $("#rerun").val()},
-					type:"GET",
-					url : "{{url_for('Vec')}}", 
+					data: {language : $("#page_language").val()},
+					type: "GET",
+					url : "{{url_for('Page')}}", 
 					success: function(response) {
-						$("#clusters").html(response);
+						$("#part_of_speech_translate").html(response[3]);
+						$("#accessibilitylable").html(response[24]);
+						$("#homebutton").attr("value",response[18]);
+						$("#clusterlable").html(response[11]);
+						$("#fullview").html(response[19]);
+						$("#kwicview").html(response[20]);
+						$("#sortinglable").html(response[21]);
+						$("#translate_page").html(response[7]);
+						$("#colorchange").html(response[16]);
+						$("#fontchange").html(response[17]);
+						$("#rerunlable").html(response[22]);
+						$("#sentlengthlable").html(response[23]);
+						document.getElementsByName('dropdown')[0].options[0].innerHTML = response[12];
+						document.getElementsByName('dropdown')[0].options[1].innerHTML = response[13];
+						document.getElementsByName('dropdown')[0].options[2].innerHTML = response[14];
+						document.getElementsByName('dropdown')[0].options[3].innerHTML = response[15];
+						document.getElementsByName('sentlength')[0].options[0].innerHTML = "5 "+response[26];
+						document.getElementsByName('sentlength')[0].options[1].innerHTML = "7 "+response[26];
+						document.getElementsByName('sentlength')[0].options[2].innerHTML = "9 "+response[26];
 					}
 				})
 			});
+		});
+	</script>
+	<script>
+		if (document.getElementById("error").innerHTML.length > 0) {
+			document.getElementById("results").style.backgroundColor = "crimson"
+		} 
+	</script>
+	<script>
+		var coll = document.getElementsByClassName("collapsible");
+		var i;
+		for (i = 0; i < coll.length; i++) {
+			coll[i].addEventListener("click", function() {
+				this.classList.toggle("active");
+				var content = this.nextElementSibling;
+				var preview = content.nextElementSibling;
+				if (content.style.display === "block") {
+					content.style.display = "none";
+					preview.style.display = "block";
+				} 
+				else {
+					content.style.display = "block";
+					preview.style.display = "none";
+				}
 			});
-		</script>
-		<script>$(function() 
-			{$("#sentlength").on("change", function(event){
+		}
+	</script>
+	<script> function fulltext(){$.ajax({url: "{{url_for('FullText')}}", success: function(result){$("#clusters").html(result);
+			}})};</script>
+	<script> function KWIC(){$.ajax({url: "{{url_for('kwic')}}", type: "POST", success: function(result){$("#clusters").html(result);
+	}})};</script>
+		<script>var invertcolors = false;
+			var fontsize = false;
+		$("#Invert_colors").on('change', function() {
+			if ($(this).is(':checked')) {
+				invertcolors = $(this).is(':checked');
+				document.getElementById("sentlengthlable").style.color = "white";
+				document.getElementById("rerunlable").style.color = "white";
+				document.getElementById("sortinglable").style.color = "white";
+				document.body.id = "body-invert"
 				$.ajax({
-					data: {language : $("#sentlength").val()},
-					type:"GET",
-					url : "{{url_for('kwic')}}", 
-					success: function(response) {
-						$("#clusters").html(response);
-					}
-				})
-			});
-			});
-		</script>
-		<script>
-			$(function() {
-				$("#page_language").on("change", function(event){
-					$.ajax({
-						data: {language : $("#page_language").val()},
-						type: "GET",
-						url : "{{url_for('Page')}}", 
-						success: function(response) {
-							console.log(response);
-							$("#translate_page").html(response[6]);
-							$("#searchbutton").html(response[8]);
-							$("#part_of_speech_translate").html(response[2]);
-							$("#resultslable").html(response[7]);
-							$("input[type=text]").attr("placeholder", response[4]);
-							$("#resultslable").html(response[7]);
-							$("#error").html(response[3]);
-							$("#clustermountlable").html(response[9]);
-							$("#language_translate").html(response[1]);
-						}
-					})
-				});
-			});
-		</script>
-		<script>
-			if (document.getElementById("error").innerHTML.length > 0) {
-				document.getElementById("results").style.backgroundColor = "crimson"
-			} 
-		</script>
-		<script>
-			var coll = document.getElementsByClassName("collapsible");
-			var i;
-			for (i = 0; i < coll.length; i++) {
-				coll[i].addEventListener("click", function() {
-					this.classList.toggle("active");
-					var content = this.nextElementSibling;
-					var preview = content.nextElementSibling;
-					if (content.style.display === "block") {
-						content.style.display = "none";
-						preview.style.display = "block";
-					} 
-					else {
-						content.style.display = "block";
-						preview.style.display = "none";
-					}
-				});
+				data: {language : "clicked"},
+				type:"GET",
+				url : "{{url_for('colors')}}", 
+				success: function(response) {
+					;
+				}
+			})
 			}
+			else {
+				invertcolors = $(this).is(':checked');
+				document.getElementById("sentlengthlable").style.color = "black";
+				document.getElementById("rerunlable").style.color = "black";
+				document.getElementById("sortinglable").style.color = "black";
+				document.body.id = ""
+				$.ajax({
+				data: {language : "unclicked"},
+				type:"GET",
+				url : "{{url_for('colors')}}", 
+				success: function(response) {
+					;
+				}
+			})
+			}
+		});
+		$("#Font_size").on('change', function() {
+			if ($(this).is(':checked')) {
+				fontsize = $(this).is(':checked');
+				document.body.style.fontSize = "xx-large"
+				$.ajax({
+				data: {language : "clicked"},
+				type:"GET",
+				url : "{{url_for('fontsize')}}", 
+				success: function(response) {
+					;
+				}
+			})
+			}
+			else {
+				fontsize = $(this).is(':checked');
+			   document.body.style.fontSize = "medium"
+			   $.ajax({
+				data: {language : "unclicked"},
+				type:"GET",
+				url : "{{url_for('fontsize')}}", 
+				success: function(response) {
+					;
+				}
+			})
+			}
+		});
 		</script>
-		<script> function fulltext(){$.ajax({url: "{{url_for('FullText')}}", success: function(result){$("#clusters").html(result);
-				}})};</script>
-		<script> function KWIC(){$.ajax({url: "{{url_for('kwic')}}",  type: "POST",success: function(result){$("#clusters").html(result);
-		}})};</script>
-			<script>var invertcolors = false;
-				var fontsize = false;
-			$("#Invert_colors").on('change', function() {
-				if ($(this).is(':checked')) {
-					invertcolors = $(this).is(':checked');
-					document.getElementById("sentlengthlable").style.color = "white";
-					document.getElementById("rerunlable").style.color = "white";
-					document.getElementById("sortinglable").style.color = "white";
-					document.body.id = "body-invert"
-					$.ajax({
-					data: {language : "clicked"},
-					type:"GET",
-					url : "{{url_for('colors')}}", 
-					success: function(response) {
-						;
-					}
-				})
-				}
-				else {
-					invertcolors = $(this).is(':checked');
-					document.getElementById("sentlengthlable").style.color = "black";
-					document.getElementById("rerunlable").style.color = "black";
-					document.getElementById("sortinglable").style.color = "black";
-					document.body.id = ""
-					$.ajax({
-					data: {language : "unclicked"},
-					type:"GET",
-					url : "{{url_for('colors')}}", 
-					success: function(response) {
-						;
-					}
-				})
-				}
-			});
-			$("#Font_size").on('change', function() {
-				if ($(this).is(':checked')) {
-					fontsize = $(this).is(':checked');
-					document.body.style.fontSize = "xx-large"
-					$.ajax({
-					data: {language : "clicked"},
-					type:"GET",
-					url : "{{url_for('fontsize')}}", 
-					success: function(response) {
-						;
-					}
-				})
-				}
-				else {
-					fontsize = $(this).is(':checked');
-				   document.body.style.fontSize = "medium"
-				   $.ajax({
-					data: {language : "unclicked"},
-					type:"GET",
-					url : "{{url_for('fontsize')}}", 
-					success: function(response) {
-						;
-					}
-				})
-				}
-			});
-			</script>
-			<script>
-				var colors = document.getElementById("historycolors").innerHTML
-				var fontsize = document.getElementById("historyfontsize").innerHTML
-				if (colors == "clicked"){
-					invertcolors = $(this).is(':checked');
-					document.getElementById("sentlengthlable").style.color = "white";
-					document.getElementById("rerunlable").style.color = "white";
-					document.getElementById("sortinglable").style.color = "white";
-					document.body.id = "body-invert"
-					document.getElementById("Invert_colors").checked = true;
-				}else{
-					document.getElementById("sentlengthlable").style.color = "black";
-					document.getElementById("rerunlable").style.color = "black";
-					document.getElementById("sortinglable").style.color = "black";
-					document.body.id = ""
-					document.getElementById("Invert_colors").checked = false;
-				}
-				if (fontsize == "clicked"){
-					fontsize = $(this).is(':checked');
-					document.body.style.fontSize = "xx-large"
-					document.getElementById("Font_size").checked = true;
-				}else{
-					document.getElementById("Font_size").checked = false;
-					document.body.style.fontSize = "medium"
-				}
-						
-					</script>
-			</div>
-	</body>
+		<script>
+			var colors = document.getElementById("historycolors").innerHTML
+			var fontsize = document.getElementById("historyfontsize").innerHTML
+			if (colors == "clicked"){
+				invertcolors = $(this).is(':checked');
+				document.getElementById("sentlengthlable").style.color = "white";
+				document.getElementById("rerunlable").style.color = "white";
+				document.getElementById("sortinglable").style.color = "white";
+				document.body.id = "body-invert"
+				document.getElementById("Invert_colors").checked = true;
+			}else{
+				document.getElementById("sentlengthlable").style.color = "black";
+				document.getElementById("rerunlable").style.color = "black";
+				document.getElementById("sortinglable").style.color = "black";
+				document.body.id = ""
+				document.getElementById("Invert_colors").checked = false;
+			}
+			if (fontsize =="clicked"){
+				fontsize = $(this).is(':checked');
+				document.body.style.fontSize = "xx-large"
+				document.getElementById("Font_size").checked = true;
+			}else{
+				document.getElementById("Font_size").checked = false;
+				document.body.style.fontSize = "medium"
+			}
+					
+				</script>
+				<script>
+					var pagelan = document.getElementById("pagelangaugeselected").innerHTML
+					document.getElementById('page_language').value=pagelan;
+				</script>
+		</div>
+</body>
 </html>
 
 

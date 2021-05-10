@@ -11,7 +11,7 @@ def KMeansClustering(clusterAmount,line_id,language):
     try:
         kmeans = KMeans(n_clusters=clusterAmount).fit(vectors)
     except:
-        return f"Not enough sentences for {clusterAmount} clusters there are only {len(sents)} senetences"
+        return f"Not enough"
     clusters = kmeans.predict(vectors.reshape(-1,1))
     for x in range(len(clusters)):
         vectordic[sents[x]] = clusters[x]

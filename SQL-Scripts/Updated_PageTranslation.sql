@@ -1,12 +1,5 @@
 use wordsense;
 
-DELETE from lang_ref where lang_desc = "Spanish";
-DELETE from lang_ref where lang_desc = "Irish";
-DELETE from lang_ref where lang_desc = "Arabic";
-DELETE from lang_ref where lang_desc = "Hindi";
-DELETE from lang_ref where lang_desc = "Chinese";
-DELETE from lang_ref where lang_desc = "Urdu";
-
 DROP TABLE IF EXISTS Page_Translation;
 
 create table Page_Translation (
@@ -25,10 +18,21 @@ create table Page_Translation (
     FWA_Translation LONGTEXT NOT NULL,
     FWD_Translation LONGTEXT NOT NULL,
     PWA_Translation LONGTEXT NOT NULL,
-    PWD_Translation LONGTEXT NOT NULL);
+    PWD_Translation LONGTEXT NOT NULL,
+    abc_color LONGTEXT NOT NULL,
+    abc_fontsize LONGTEXT NOT NULL,
+    return_page LONGTEXT NOT NULL,
+    full_view LONGTEXT NOT NULL,
+    kwic_view LONGTEXT NOT NULL,
+    sorting LONGTEXT NOT NULL,
+    rerunclusters LONGTEXT NOT NULL,
+    sentpreview LONGTEXT NOT NULL,
+    abclist LONGTEXT NOT NULL,
+    notenough LONGTEXT NOT NULL,
+    words LONGTEXT NOT NULL);
     
 insert into Page_Translation ( Lang_ID, Language_Page, Language_Translation, POS_Translation, Error_Translation, PlaceHolder_Translation,Results_Error_Translation,Translate_Page_Translation,Results_Translation,Submit_Translation,number_of_cluster,cluster_Translation,
- FWA_Translation, FWD_Translation, PWA_Translation, PWD_Translation)
+ FWA_Translation, FWD_Translation, PWA_Translation, PWD_Translation, abc_color, abc_fontsize, return_page, full_view, kwic_view, sorting,rerunclusters,sentpreview,abclist,notenough,words)
 values (1,
 "English",
 "Language",
@@ -44,11 +48,22 @@ values (1,
 "Following Word Ascending",
 "Following Word Descending",
 "Preceding Word Ascending",
-"Preceding Word Descending");
+"Preceding Word Descending",
+"Invert Colors",
+"Larger Font Size",
+"Return to search page",
+"Show full sentences view",
+"Show KWIC sentences view",
+"Choose sorting",
+"Rerun clusters",
+"Choose length of sentence preview",
+"Accessibility List",
+"Not enough sentences for clusters, try lower amount clusters",
+"words");
 
 /* Populate Italian data into table */  
-insert into Page_Translation (Lang_ID, Language_Page, Language_Translation, POS_Translation, Error_Translation, PlaceHolder_Translation,Results_Error_Translation,Translate_Page_Translation,Results_Translation,Submit_Translation,number_of_cluster,cluster_Translation,
-FWA_Translation, FWD_Translation, PWA_Translation, PWD_Translation)
+insert into Page_Translation ( Lang_ID, Language_Page, Language_Translation, POS_Translation, Error_Translation, PlaceHolder_Translation,Results_Error_Translation,Translate_Page_Translation,Results_Translation,Submit_Translation,number_of_cluster,cluster_Translation,
+ FWA_Translation, FWD_Translation, PWA_Translation, PWD_Translation, abc_color, abc_fontsize, return_page, full_view, kwic_view, sorting,rerunclusters,sentpreview,abclist,notenough,words)
 values ( 2,
 "Italian",
 "Linguaggio",
@@ -64,12 +79,23 @@ values ( 2,
 "A seguito di parola ascendente",
 "Parola che segue discendente",
 "Parola precedente ascendente",
-"Parola precedente discendente");
+"Parola precedente discendente",
+"Inverti i colori",
+"Dimensione carattere maggiore",
+"torna alla pagina di ricerca",
+"mostra la visualizzazione completa delle frasi",
+"mostra la visualizzazione delle frasi KWIC",
+"Scegli l'ordinamento",
+"Riesegui i cluster",
+"Scegli la lunghezza dell'anteprima della frase",
+"Elenco accessibilità",
+"Frasi insufficienti per i cluster, prova con un numero inferiore di cluster",
+"parole");
 
 
 /* Populate German data into table */    
-insert into Page_Translation (Lang_ID, Language_Page, Language_Translation, POS_Translation, Error_Translation, PlaceHolder_Translation,Results_Error_Translation,Translate_Page_Translation,Results_Translation,Submit_Translation,number_of_cluster,cluster_Translation,
-FWA_Translation, FWD_Translation, PWA_Translation, PWD_Translation)
+insert into Page_Translation ( Lang_ID, Language_Page, Language_Translation, POS_Translation, Error_Translation, PlaceHolder_Translation,Results_Error_Translation,Translate_Page_Translation,Results_Translation,Submit_Translation,number_of_cluster,cluster_Translation,
+ FWA_Translation, FWD_Translation, PWA_Translation, PWD_Translation, abc_color, abc_fontsize, return_page, full_view, kwic_view, sorting,rerunclusters,sentpreview,abclist,notenough,words)
  values (3,
  "German",
  "Sprache",
@@ -85,6 +111,17 @@ FWA_Translation, FWD_Translation, PWA_Translation, PWD_Translation)
  "Dem Wort aufsteigend folgen",
  "Folgendes Wort absteigend",
  "Vorangehendes Wort aufsteigend",
- "Vorhergehendes Wort absteigend");
+ "Vorhergehendes Wort absteigend",
+ "Farben umkehren",
+ "Größere Schriftgröße",
+ "Zurück zur Suchseite",
+ "Vollständige Satzansicht anzeigen",
+ "KWIC-Satzansicht anzeigen",
+ "Wählen Sie Sortierung",
+ "Cluster erneut ausführen",
+ "Wählen Sie die Länge der Satzvorschau",
+ "Barrierefreiheitsliste",
+ "Nicht genug Sätze für Cluster, versuchen Sie es mit Clustern mit geringerer Anzahl",
+ "Wörter");
  
  alter table page_translation ADD FOREIGN KEY(Lang_ID) REFERENCES lang_ref(Lang_ID);

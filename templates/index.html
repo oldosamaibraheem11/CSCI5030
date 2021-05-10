@@ -11,13 +11,14 @@
 		<link rel="stylesheet" href="static/main.css">
     </head>
     <body id = "wholepage">
-		<p id = "historyfontsize" hidden = "True" value = "{{fontsize}}"></p>
-		<p id = "historycolors" hidden = "True" value = "{{colors}}"></p>
+		<p id = "historyfontsize" hidden >{{fontsize}}</p>
+		<p id = "historycolors" hidden>{{colors}}</p>
+		<p id = "pagelangaugeselected" hidden>{{word_translated_list[1]}}</p>
 		<form method="GET" action="/search" >
 		<div id = "header">
 			<h1 id = "appname">Deelingual</h1>
 			<div id = "translate_page_div" >
-				<label id = "translate_page"for="page_language">{{word_translated_list[6]}}</label>
+				<label id = "translate_page"for="page_language">{{word_translated_list[7]}}</label>
 				<select id="page_language" name ="page_language">
 					{% for page_language in page_language_list %}
 					<option value="{{page_language}}">{{page_language}}</option>
@@ -25,37 +26,34 @@
 				</select>
 			</div>
 			<div id = "accessibility">
-				Accessibility List:
-				<label class="switch">
-					Invert Colors
+			<label id = "accessibilitylable"for="page_language">{{word_translated_list[24]}}</label>
+			<label id = "colorchange"class="switch">{{word_translated_list[16]}}</label>
 					<input id = "Invert_colors"type="checkbox">
 					<span class="slider"></span>
-				  </label>
-				  <label class="switch">
-					Larger Font Size
+				<label id = "fontchange"class="switch">{{word_translated_list[17]}}</label>
 					<input id = "Font_size"type="checkbox">
 					<span class="slider"></span>
-				  </label>
+				 
 			</div>
 		</div>
 		<div id = "SearchForm">
-				<input id = "searchbar"type="text" name="word" placeholder="{{word_translated_list[4]}}"
+				<input id = "searchbar"type="text" name="word" placeholder="{{word_translated_list[5]}}"
 					pattern="[A-Za-z.,':^?!\[\]`)&quot{\s-]{1,100}"
 				title="Word should contain Characters, punctuations and spaces only" required>
-				<button id = "searchbutton" type="submit">{{word_translated_list[8]}}</button></div> 
-		<label id = "language_translate"for="language">{{word_translated_list[1]}}</label>
+				<button id = "searchbutton" type="submit">{{word_translated_list[9]}}</button></div> 
+		<label id = "language_translate"for="language">{{word_translated_list[2]}}</label>
 		<select name="language" id="language">
 		{% for language in language_list %}
 			<option value="{{language}}">{{language}}</option>
 		{% endfor %}
 		</select>
-		<label id = "part_of_speech_translate"for="partOfSpeech">{{word_translated_list[2]}}</label>
+		<label id = "part_of_speech_translate"for="partOfSpeech">{{word_translated_list[3]}}</label>
 			<select name="partOfSpeech" id="partOfSpeech">
 			{% for PartOfSpeech in part_of_speech_list %}
 				<option value="{{PartOfSpeech}}">{{PartOfSpeech}}</option>
 			{% endfor %}
 			</select>
-		<label id = "clustermountlable"for="clustermount">Number of clusters</label>
+		<label id = "clustermountlable"for="clustermount">{{word_translated_list[10]}}</label>
 		<select name = "clusteramount" id = "clusteramount">
 			<option value = "1">1</option>
 			<option value = "2">2</option>
@@ -131,16 +129,18 @@
 						type: "GET",
 						url : "{{url_for('Page')}}", 
 						success: function(response) {
-							console.log(response);
-							$("#translate_page").html(response[6]);
-							$("#searchbutton").html(response[8]);
-							$("#part_of_speech_translate").html(response[2]);
-							$("#resultslable").html(response[7]);
-							$("input[type=text]").attr("placeholder", response[4]);
-							$("#resultslable").html(response[7]);
-							$("#error").html(response[3]);
-							$("#clustermountlable").html(response[9]);
-							$("#language_translate").html(response[1]);
+							$("#part_of_speech_translate").html(response[3]);
+							$("#accessibilitylable").html(response[24]);
+							$("#searchbar").html(response[4]);
+							$("#searchbutton").html(response[9]);
+							$("#language_translate").html(response[2]);
+							$("#clustermountlable").html(response[10]);
+							$("#translate_page").html(response[7]);
+							$("#colorchange").html(response[16]);
+							$("#fontchange").html(response[17]);
+							$("input[type=text]").attr("placeholder", response[5]);
+
+							
 						}
 					})
 				});
@@ -237,7 +237,6 @@
 						var colors = document.getElementById("historycolors").innerHTML
 				var fontsize = document.getElementById("historyfontsize").innerHTML
 				if (colors == "clicked"){
-							invertcolors = $(this).is(':checked');
 							document.getElementById("language_translate").style.color = "white";
 							document.getElementById("part_of_speech_translate").style.color = "white";
 							document.getElementById("clustermountlable").style.color = "white";
@@ -259,6 +258,10 @@
 					document.body.style.fontSize = "medium"
 				}
 						
+					</script>
+					<script>
+						var pagelan = document.getElementById("pagelangaugeselected").innerHTML
+						document.getElementById('page_language').value=pagelan;
 					</script>
 			</div>
 	</body>

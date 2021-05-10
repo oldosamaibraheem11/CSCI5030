@@ -14,19 +14,27 @@ german_dictionary = logic.GetIndexing("german")
 italian_dictionary = logic.GetIndexing("italian")
 activesession['colors'] = 'unclicked'
 activesession['fontsize'] = 'unclicked'
+activesession['pagelanguage'] = "english"
 @app.route('/', methods =["GET", "POST"])
 def pagehome():
-    return redirect(url_for('homepage'))
+    language_list = ['English','Italian','German']
+    part_of_speech_list = logic.SQLQuery("SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
+    page_language_list = ['English','Italian','German']
+    word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = 'english';")
+    fontsize = activesession['fontsize']
+    colors = activesession['colors']
+    return render_template('index.html', colors=colors,fontsize=fontsize,language_list = language_list, part_of_speech_list=part_of_speech_list,page_language_list=page_language_list,word_translated_list=word_translated_list)
 
 @app.route('/homepage', methods =["GET", "POST"])
 def homepage():
     language_list = ['English','Italian','German']
-    part_of_speech_list = logic.SQLQuery("SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
+    part_of_speech_list = logic.SQLQuery(f"SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
     page_language_list = ['English','Italian','German']
-    word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
-    fontsize = activesession['fontsize'] 
+    pagelanguage = activesession['pagelanguage']
+    word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = '{pagelanguage}';")
+    fontsize = activesession['fontsize']
     colors = activesession['colors']
-    return render_template('index.html', language_list = language_list, part_of_speech_list=part_of_speech_list,page_language_list=page_language_list,word_translated_list=word_translated_list)
+    return render_template('index.html', colors=colors,fontsize=fontsize,language_list = language_list, part_of_speech_list=part_of_speech_list,page_language_list=page_language_list,word_translated_list=word_translated_list)
 
 @app.route('/search', methods =["GET", "POST"])
 def search():
@@ -70,9 +78,10 @@ def search():
         if len(sentence_List_clustered) == 0:
             error = "Error: Word not in corpus"
     language_list = logic.SQLQuery("SELECT Lang_Desc FROM Lang_Ref;")
-    part_of_speech_list = logic.SQLQuery("SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
+    part_of_speech_list = logic.SQLQuery(f"SELECT Part_Desc FROM Speech_Parts WHERE Lang_ID = 1;")
     page_language_list = logic.SQLQuery("select Language_Page from Page_Translation;")
-    word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
+    pagelanguage = activesession['pagelanguage']
+    word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = '{pagelanguage}';")
     fontsize = activesession['fontsize'] 
     colors = activesession['colors']
     return render_template('search.html', fontsize=fontsize,colors=colors,sentence_List_clustered=sentence_List_clustered, error=error, page_language_list=page_language_list,word_translated_list=word_translated_list)
@@ -91,6 +100,7 @@ def Query():
 @app.route('/Page', methods =["GET", "POST"])
 def Page():
     page_language_selected = request.args.get('language')
+    activesession['pagelanguage'] = page_language_selected
     word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = '{page_language_selected}';")
     return jsonify(word_translated_list)
 
@@ -105,7 +115,8 @@ def Sort():
         nested_list = Kwic.KWlist(word,nested_list,0,-1)
     else:
         nested_list = Kwic.KWlist((word),nested_list,int(sentencelength),0)
-    word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
+    pagelanguage = activesession['pagelanguage']
+    word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = '{pagelanguage}';")
     return render_template('clusters.html', sentence_List_clustered=nested_list,word_translated_list=word_translated_list)
 
 @app.route('/Vec', methods =["GET", "POST"])
@@ -128,7 +139,8 @@ def Vec():
     else:
         sentencelength = activesession['sentlength']
         sentence_List_clustered = Kwic.KWlist((word),sentence_List_clustered,int(sentencelength),0)
-    word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
+    pagelanguage = activesession['pagelanguage']
+    word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = '{pagelanguage}';")
     return render_template('clusters.html', sentence_List_clustered=sentence_List_clustered, error=error,word_translated_list=word_translated_list)
 @app.route('/FullText', methods =["GET", "POST"])
 def FullText():
@@ -136,7 +148,8 @@ def FullText():
     lastwordsearch = activesession['Word_Selected']
     nestedlist = activesession["sentence_list"]
     sentence_List_clustered = Kwic.KWlist((lastwordsearch),nestedlist,0,-1)
-    word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
+    pagelanguage = activesession['pagelanguage']
+    word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = '{pagelanguage}';")
     return render_template('clusters.html', sentence_List_clustered = sentence_List_clustered,word_translated_list=word_translated_list)
 
 @app.route('/kwic', methods =["GET", "POST"])
@@ -149,7 +162,8 @@ def kwic():
         sentencelength = request.args.get('language')
         activesession['sentlength'] = sentencelength
     sentence_List_clustered = Kwic.KWlist((lastwordsearch),nestedlist,int(sentencelength),0)
-    word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
+    pagelanguage = activesession['pagelanguage']
+    word_translated_list = logic.SQLQuery(f"select * from Page_Translation WHERE Language_Page = '{pagelanguage}';")
     return render_template('clusters.html', sentence_List_clustered = sentence_List_clustered,word_translated_list=word_translated_list)
 @app.route('/colors', methods =["GET", "POST"])
 def colors():
