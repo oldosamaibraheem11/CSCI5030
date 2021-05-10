@@ -99,6 +99,7 @@ def Sort():
     if activesession['FullText'] == True:
         nested_list = Kwic.KWlist(word,nested_list,0,-1)
     else:
+        
         nested_list = Kwic.KWlist((word),nested_list,int(sentencelength),0)
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
     return render_template('clusters.html', sentence_List_clustered=nested_list,word_translated_list=word_translated_list)
@@ -121,6 +122,7 @@ def Vec():
     if activesession['FullText'] == True:
         sentence_List_clustered = Kwic.KWlist(word,sentence_List_clustered,0,-1)
     else:
+        sentencelength = activesession['sentlength']
         sentence_List_clustered = Kwic.KWlist((word),sentence_List_clustered,int(sentencelength),0)
     word_translated_list = logic.SQLQuery("select * from Page_Translation WHERE Language_Page = 'english';")
     return render_template('clusters.html', sentence_List_clustered=sentence_List_clustered, error=error,word_translated_list=word_translated_list)
