@@ -55,8 +55,8 @@ def search():
             error = "Indexing file is not present"
         Lang_ID = logic.GetLanguageId(language_selected)
         part_of_speech_selected = request.args.get('partOfSpeech')
-        word_selected = (request.args.get('word') + '/' + request.args.get('partOfSpeech')).lower()
-        activesession['Word_Selected'] = request.args.get('word')
+        word_selected = (request.args.get('word').lower() + '/' + request.args.get('partOfSpeech')).lower()
+        activesession['Word_Selected'] = request.args.get('word').lower()
         if(not logic.isCorpusLoaded(language_selected + "_corpus")):
             error = "Corpus is not loaded into the database"
         if word_selected in dictionary:
@@ -68,13 +68,13 @@ def search():
             if isinstance(sentence_List_clustered, list):
                 activesession["sentence_list"] = sentence_List_clustered
                 SortSelection = "Following,Ascending"
-                sentence_List_clustered = logic.sortsents(request.args.get('word'),sentence_List_clustered,SortSelection)
+                sentence_List_clustered = logic.sortsents(request.args.get('word').lower(),sentence_List_clustered,SortSelection)
             else:
                 error = sentence_List_clustered
                 sentence_List_clustered = []
             sentencelength = 5
             activesession['sentlength'] = sentencelength
-            sentence_List_clustered = Kwic.KWlist((request.args.get('word')),sentence_List_clustered,int(sentencelength),0)
+            sentence_List_clustered = Kwic.KWlist((request.args.get('word').lower()),sentence_List_clustered,int(sentencelength),0)
         if len(sentence_List_clustered) == 0:
             error = "Error: Word not in corpus"
     language_list = logic.SQLQuery("SELECT Lang_Desc FROM Lang_Ref;")
@@ -123,7 +123,7 @@ def Sort():
 def Vec():
     error = ""
     clusteramount = request.args.get('language')
-    word = activesession['Word_Selected']
+    word = activesession['Word_Selected'].lower()
     line_ids = activesession["line_ids"]
     language_selected = activesession['searchlanguage']
     sentence_List_clustered = kmeans.KMeansClustering(int(clusteramount),line_ids,language_selected)
@@ -145,7 +145,7 @@ def Vec():
 @app.route('/FullText', methods =["GET", "POST"])
 def FullText():
     activesession['FullText'] = True
-    lastwordsearch = activesession['Word_Selected']
+    lastwordsearch = activesession['Word_Selected'].lower()
     nestedlist = activesession["sentence_list"]
     sentence_List_clustered = Kwic.KWlist((lastwordsearch),nestedlist,0,-1)
     pagelanguage = activesession['pagelanguage']
@@ -154,7 +154,7 @@ def FullText():
 
 @app.route('/kwic', methods =["GET", "POST"])
 def kwic():
-    lastwordsearch = activesession['Word_Selected']
+    lastwordsearch = activesession['Word_Selected'].lower()
     nestedlist = activesession["sentence_list"]
     if request.method == "POST":
         sentencelength = activesession['sentlength']
