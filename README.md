@@ -9,4 +9,3 @@ Deelingual is a multi lingual dictionary application that helps lexicographers(d
 -Key word in context(KWIC)
 
 -Configurable number of clusters selection
-
